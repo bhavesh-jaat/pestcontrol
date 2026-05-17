@@ -6,6 +6,7 @@
 <title>PestGuard India – Pest Control Booking</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -221,6 +222,38 @@ textarea{resize:none;}
 .err{border-color:#e53935!important;box-shadow:0 0 0 3px rgba(229,57,53,0.1)!important;}
 .err-msg{font-size:11px;color:#e53935;margin-top:4px;display:none;}
 .err-msg.show{display:block;}
+
+/* UPI MODAL — new layout */
+.upi-top-row{display:flex;gap:10px;margin-bottom:14px;}
+.upi-id-box{flex:1;background:#f0fdf4;border:1.5px solid #a5d6a7;border-radius:var(--r2);padding:10px 12px;text-align:center;}
+.upi-id-box .label{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.upi-id-box .upiid{font-size:12px;font-weight:700;color:var(--green);word-break:break-all;line-height:1.3;}
+.copy-upi-btn{margin-top:6px;padding:4px 12px;background:var(--green);color:#fff;border:none;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;}
+.upi-amount-box{flex:0 0 90px;background:#fff3e0;border:1.5px solid #ffcc80;border-radius:var(--r2);padding:10px 8px;text-align:center;display:flex;flex-direction:column;justify-content:center;}
+.upi-amount-box .label{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.upi-amount-box .amount{font-size:18px;font-weight:800;color:var(--orange);}
+
+.btn-open-upi{
+  width:100%;background:linear-gradient(135deg,#4a148c,#6a1b9a);
+  color:#fff;border:none;border-radius:var(--r2);
+  padding:16px 14px;font-size:15px;font-weight:700;
+  font-family:'Poppins',sans-serif;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  box-shadow:0 4px 20px rgba(74,20,140,0.3);transition:all 0.2s;
+  margin-bottom:16px;
+}
+.btn-open-upi:hover{background:linear-gradient(135deg,#38006b,#4a148c);transform:translateY(-1px);}
+
+.or-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.or-divider span{font-size:12px;color:var(--muted);font-weight:500;padding:0 4px;}
+
+.qr-section{text-align:center;margin-bottom:16px;}
+.qr-label{font-size:13px;font-weight:600;margin-bottom:2px;}
+.qr-sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.qr-box{display:inline-flex;padding:12px;background:#fff;border:2px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);}
+#qr-canvas{display:block;}
+.qr-note{font-size:11px;color:var(--muted);margin-top:8px;}
 </style>
 </head>
 <body>
@@ -442,43 +475,42 @@ textarea{resize:none;}
       <div class="ps" id="ps3"><div class="ps-num">3</div>Done</div>
     </div>
 
-    <!-- STEP 1: Choose UPI App & Pay -->
+    <!-- STEP 1: Pay via UPI -->
     <div class="pay-step-content active" id="modal-step1">
       <div class="modal-title">💳 UPI se Payment Karo</div>
-      <div class="modal-sub">Niche apna UPI app choose karo — app khulegi aur payment ho jayegi</div>
+      <div class="modal-sub">Niche button dabao — phone ka UPI app automatically khulega</div>
 
-      <div class="upi-id-box">
-        <div class="label">Pay to UPI ID</div>
-        <div class="upiid" id="modal-upi-id">itzbhavesh011@oksbi</div>
-        <button class="copy-upi-btn" onclick="copyUPI()">Copy</button>
+      <!-- UPI ID + Amount row -->
+      <div class="upi-top-row">
+        <div class="upi-id-box">
+          <div class="label">UPI ID</div>
+          <div class="upiid" id="modal-upi-id">itzbhavesh011@oksbi</div>
+          <button class="copy-upi-btn" onclick="copyUPI()">Copy</button>
+        </div>
+        <div class="upi-amount-box">
+          <div class="label">Amount</div>
+          <div class="amount" id="modal-amount">₹2,500</div>
+        </div>
       </div>
 
-      <div class="upi-amount-box">
-        <div class="label">Pay Karna Hai</div>
-        <div class="amount" id="modal-amount">₹2,500</div>
-      </div>
+      <!-- Big UPI Pay Button — opens any installed UPI app -->
+      <button class="btn-open-upi" id="btn-open-upi" onclick="openAnyUPI()">
+        <span style="font-size:22px">📲</span>
+        <span>PhonePe / GPay / Paytm se Pay Karo</span>
+        <span style="font-size:11px;opacity:0.85;font-weight:400;display:block;margin-top:3px;">Phone ka UPI app automatically khulega</span>
+      </button>
 
-      <div class="upi-grid">
-        <div class="upi-card" onclick="openUPIApp('phonepe')">
-          <div class="upi-app-icon">📱</div>
-          <div class="upi-app-name">PhonePe</div>
-          <div class="upi-app-tag">Tap to open</div>
+      <!-- OR divider -->
+      <div class="or-divider"><span>Ya</span></div>
+
+      <!-- QR Code for scanning -->
+      <div class="qr-section">
+        <div class="qr-label">📷 QR Code Scan Karo</div>
+        <div class="qr-sub">Kisi bhi UPI app se scan karo</div>
+        <div class="qr-box">
+          <canvas id="qr-canvas"></canvas>
         </div>
-        <div class="upi-card" onclick="openUPIApp('gpay')">
-          <div class="upi-app-icon">🔵</div>
-          <div class="upi-app-name">Google Pay</div>
-          <div class="upi-app-tag">Tap to open</div>
-        </div>
-        <div class="upi-card" onclick="openUPIApp('paytm')">
-          <div class="upi-app-icon">💙</div>
-          <div class="upi-app-name">Paytm</div>
-          <div class="upi-app-tag">Tap to open</div>
-        </div>
-        <div class="upi-card" onclick="openUPIApp('bhim')">
-          <div class="upi-app-icon">⚡</div>
-          <div class="upi-app-name">Any UPI App</div>
-          <div class="upi-app-tag">BHIM / Others</div>
-        </div>
+        <div class="qr-note">PhonePe · GPay · Paytm · BHIM — Sab kaam karega</div>
       </div>
 
       <button class="btn-paid-app" onclick="goStep2()">✅ Maine Payment Kar Di — Aage Badho</button>
@@ -626,27 +658,48 @@ function proceedBooking() {
     document.getElementById('modal-upi-id').textContent = UPI_ID;
     document.getElementById('modal-amount').textContent = '₹' + state.price.toLocaleString('en-IN');
     document.getElementById('upi-modal').classList.add('show');
+    setTimeout(generateQR, 100);
   } else {
     finalizeBooking('Cash on Service · Pending');
   }
 }
 
-function openUPIApp(app) {
+function openAnyUPI() {
   const amt = state.price;
   const name = encodeURIComponent(UPI_NAME);
-  const note = encodeURIComponent('PestCtrl-' + document.getElementById('fname').value.trim().split(' ')[0]);
+  const note = encodeURIComponent('PestCtrl-' + (document.getElementById('fname').value.trim().split(' ')[0] || 'Customer'));
   const id = encodeURIComponent(UPI_ID);
-  const upiBase = `upi://pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`;
-  const urls = {
-    phonepe: `phonepe://pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
-    gpay:    `tez://upi/pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
-    paytm:   `paytmmp://upi/pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
-    bhim:    upiBase
-  };
-  // Try deep link, fallback to standard UPI
-  const link = urls[app] || upiBase;
-  const a = document.createElement('a'); a.href = link; a.click();
-  setTimeout(() => { try { window.location.href = upiBase; } catch(e){} }, 1800);
+  // Standard UPI intent — works on Android with any UPI app; iOS may open browser but QR is available as fallback
+  const link = `upi://pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`;
+  window.location.href = link;
+}
+
+function generateQR() {
+  // Build UPI string for QR
+  const amt = state.price || 2500;
+  const note = encodeURIComponent('PestGuard Service');
+  const upiString = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR&tn=${note}`;
+  const canvas = document.getElementById('qr-canvas');
+  if (!canvas) return;
+  // Use QRCode.js CDN
+  if (window.QRCode) {
+    canvas.innerHTML = '';
+    new QRCode(canvas, {
+      text: upiString,
+      width: 160,
+      height: 160,
+      colorDark: '#1B6B35',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } else {
+    // Fallback: use Google Charts API to generate QR as image
+    const img = document.createElement('img');
+    img.src = `https://chart.googleapis.com/chart?chs=160x160&cht=qr&chl=${encodeURIComponent(upiString)}&choe=UTF-8`;
+    img.width = 160; img.height = 160;
+    img.alt = 'UPI QR Code';
+    canvas.appendChild(img);
+  }
 }
 
 function copyUPI() {
