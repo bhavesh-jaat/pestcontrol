@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PestGuard Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green:#1B6B35;--green2:#27AE60;--green-light:#E8F5E9;
+  --orange:#E65100;--orange-light:#FFF3E0;
+  --blue:#1565C0;--blue-light:#E3F2FD;
+  --red:#C62828;--red-light:#FFEBEE;
+  --yellow:#F57F17;--yellow-light:#FFFDE7;
+  --bg:#F4F6F9;--white:#fff;--text:#1a1a1a;--muted:#666;
+  --border:#e0e0e0;--r:14px;--r2:10px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* LOGIN */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-card{background:var(--white);border-radius:20px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,0.12);}
+.login-logo{font-family:'Baloo 2',cursive;font-size:28px;font-weight:700;color:var(--green);text-align:center;margin-bottom:4px;}
+.login-sub{text-align:center;font-size:12px;color:var(--muted);margin-bottom:24px;}
+.login-label{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:6px;display:block;}
+.login-input{width:100%;padding:12px 14px;font-size:14px;font-family:'Poppins',sans-serif;border:1.5px solid var(--border);border-radius:var(--r2);margin-bottom:14px;transition:border-color 0.15s;}
+.login-input:focus{outline:none;border-color:var(--green);}
+.login-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:background 0.2s;margin-top:4px;}
+.login-btn:hover{background:#145228;}
+.login-err{font-size:12px;color:var(--red);text-align:center;margin-top:8px;display:none;}
+
+/* ADMIN PANEL */
+#admin-panel{display:none;}
+
+/* HEADER */
+.admin-header{background:linear-gradient(135deg,#0d4a20,#1B6B35);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.admin-logo{font-family:'Baloo 2',cursive;font-size:20px;font-weight:700;}
+.admin-logo span{opacity:0.7;font-size:12px;font-weight:400;display:block;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.notif-badge{background:#e53935;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 14px;font-size:12px;font-family:'Poppins',sans-serif;cursor:pointer;}
+.logout-btn:hover{background:rgba(255,255,255,0.25);}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 14px 0;}
+.stat-card{background:var(--white);border-radius:var(--r2);padding:14px;box-shadow:var(--shadow);}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.stat-val{font-size:22px;font-weight:700;color:var(--text);}
+.stat-val.green{color:var(--green);}
+.stat-val.orange{color:var(--orange);}
+.stat-val.blue{color:var(--blue);}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:8px;padding:12px 14px;overflow-x:auto;background:transparent;}
+.ftab{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);white-space:nowrap;transition:all 0.15s;font-family:'Poppins',sans-serif;}
+.ftab.active{background:var(--green);border-color:var(--green);color:#fff;}
+.ftab:hover:not(.active){border-color:var(--green);color:var(--green);}
+
+/* SEARCH */
+.search-bar{margin:0 14px 12px;position:relative;}
+.search-input{width:100%;padding:11px 14px 11px 40px;font-size:13px;font-family:'Poppins',sans-serif;border:1.5px solid var(--border);border-radius:var(--r2);background:var(--white);}
+.search-input:focus{outline:none;border-color:var(--green);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted);}
+
+/* BOOKINGS LIST */
+.bookings-list{padding:0 14px 20px;}
+.booking-card{background:var(--white);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--border);transition:transform 0.15s;}
+.booking-card:hover{transform:translateY(-1px);}
+.booking-card.status-new{border-left-color:var(--blue);}
+.booking-card.status-confirmed{border-left-color:var(--green);}
+.booking-card.status-done{border-left-color:#888;}
+.booking-card.status-cancelled{border-left-color:var(--red);}
+
+.bc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.bc-id{font-size:13px;font-weight:700;color:var(--text);}
+.bc-time{font-size:11px;color:var(--muted);margin-top:2px;}
+.status-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0;}
+.badge-new{background:var(--blue-light);color:var(--blue);}
+.badge-confirmed{background:var(--green-light);color:var(--green);}
+.badge-done{background:#f5f5f5;color:#666;}
+.badge-cancelled{background:var(--red-light);color:var(--red);}
+.badge-pending{background:var(--yellow-light);color:var(--yellow);}
+
+.bc-service{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.bc-item{background:var(--bg);border-radius:8px;padding:8px 10px;}
+.bc-item .k{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.bc-item .v{font-size:12px;font-weight:600;color:var(--text);}
+.bc-addr{background:var(--bg);border-radius:8px;padding:8px 10px;margin-bottom:12px;}
+.bc-addr .k{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.bc-addr .v{font-size:12px;color:var(--text);line-height:1.4;}
+
+.bc-payment{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;background:var(--green-light);border-radius:8px;padding:8px 12px;}
+.pay-info .k{font-size:10px;color:var(--muted);}
+.pay-info .v{font-size:14px;font-weight:700;color:var(--green);}
+.pay-method{font-size:12px;font-weight:600;color:var(--text);}
+
+.bc-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.action-btn{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;}
+.btn-confirm{background:var(--green-light);color:var(--green);border-color:#a5d6a7;}
+.btn-confirm:hover{background:var(--green);color:#fff;}
+.btn-done{background:#f5f5f5;color:#666;border-color:#ddd;}
+.btn-done:hover{background:#666;color:#fff;}
+.btn-cancel{background:var(--red-light);color:var(--red);border-color:#ef9a9a;}
+.btn-cancel:hover{background:var(--red);color:#fff;}
+.btn-call{background:var(--blue-light);color:var(--blue);border-color:#90caf9;}
+.btn-call:hover{background:var(--blue);color:#fff;}
+.btn-wp{background:#E8F5E9;color:#1B6B35;border-color:#a5d6a7;}
+.btn-wp:hover{background:#25D366;color:#fff;border-color:#25D366;}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-text{font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text);}
+.empty-sub{font-size:12px;}
+
+/* UTR VERIFY BOX */
+.utr-verify-box{background:#fffde7;border:2px solid #f9a825;border-radius:10px;padding:14px;margin-bottom:12px;}
+.utr-verify-title{font-size:12px;font-weight:700;color:#e65100;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.utr-number{font-size:16px;font-weight:800;color:#1a1a1a;text-align:center;background:#fff;border:1.5px solid #f9a825;border-radius:8px;padding:10px;margin-bottom:6px;letter-spacing:1px;font-family:monospace;}
+.utr-actions{display:flex;gap:8px;}
+.btn-pay-verify{flex:1;background:#1B6B35;color:#fff;border:none;border-radius:8px;padding:11px 8px;font-size:13px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:background 0.15s;}
+.btn-pay-verify:hover{background:#145228;}
+.btn-pay-reject{flex:0 0 auto;background:#fff;color:#c62828;border:2px solid #ef9a9a;border-radius:8px;padding:11px 14px;font-size:12px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;}
+.btn-pay-reject:hover{background:#ffebee;}
+
+/* PAYMENT BADGES */
+.paid-badge{display:inline-block;background:#e8f5e9;color:#1B6B35;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid #a5d6a7;}
+.pending-badge{display:inline-block;background:#fffde7;color:#e65100;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid #f9a825;animation:pulse 1.5s infinite;}
+.cod-badge{display:inline-block;background:#f5f5f5;color:#555;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid #ddd;}
+.failed-badge{display:inline-block;background:#ffebee;color:#c62828;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid #ef9a9a;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+
+/* UTR PENDING FILTER TAB */
+.ftab.alert-tab{border-color:#f9a825;color:#e65100;background:#fffde7;}
+.ftab.alert-tab.active{background:#e65100;border-color:#e65100;color:#fff;}
+
+.refresh-btn{display:block;width:calc(100% - 28px);margin:0 14px 14px;background:var(--white);border:1.5px solid var(--green);color:var(--green);border-radius:var(--r2);padding:12px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.15s;}
+.refresh-btn:hover{background:var(--green);color:#fff;}
+.add-demo-btn{display:block;width:calc(100% - 28px);margin:0 14px 14px;background:#fff3e0;border:1.5px solid #ffcc80;color:#e65100;border-radius:var(--r2);padding:10px;font-size:13px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;}
+.wp-admin{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 28px);margin:0 14px 20px;background:#25D366;color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🛡️ PestGuard</div>
+    <div class="login-sub">Admin / Technician Login</div>
+    <label class="login-label">Username</label>
+    <input class="login-input" type="text" id="login-user" placeholder="admin" />
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="login-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-err" id="login-err">❌ Wrong username or password</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:16px;">Default: admin / pestguard123</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+
+  <div class="admin-header">
+    <div class="admin-logo">🛡️ PestGuard
+      <span>Admin Panel</span>
+    </div>
+    <div class="header-right">
+      <div id="notif" class="notif-badge" style="display:none">0</div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">📋 Total Bookings</div>
+      <div class="stat-val green" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🆕 New Today</div>
+      <div class="stat-val blue" id="stat-new">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">✅ Completed</div>
+      <div class="stat-val" id="stat-done">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">💰 Revenue</div>
+      <div class="stat-val orange" id="stat-rev">₹0</div>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="filterBookings('all',this)">All</button>
+    <button class="ftab" onclick="filterBookings('New',this)">🆕 New</button>
+    <button class="ftab alert-tab" id="utr-tab" onclick="filterBookings('utr_pending',this)">⏳ UTR Verify</button>
+    <button class="ftab" onclick="filterBookings('confirmed',this)">✅ Confirmed</button>
+    <button class="ftab" onclick="filterBookings('done',this)">🏁 Done</button>
+    <button class="ftab" onclick="filterBookings('cancelled',this)">❌ Cancelled</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="search-input" placeholder="Name, phone, booking ID search karo..." oninput="searchBookings()"/>
+  </div>
+
+  <!-- LIST -->
+  <div class="bookings-list" id="bookings-list"></div>
+
+  <button class="refresh-btn" onclick="loadBookings()">🔄 Refresh Bookings</button>
+  <button class="add-demo-btn" onclick="addDemoBooking()">➕ Demo Booking Add Karo (Test)</button>
+  <button class="wp-admin" onclick="wpAdmin()">💬 Customer ko WhatsApp Karo</button>
+
+  <a href="index.html" style="display:block;text-align:center;font-size:12px;color:var(--green);padding-bottom:24px;text-decoration:none;font-weight:500;">← Customer Booking Page</a>
+
+</div>
+
+<script>
+const ADMIN_CREDS = { admin: 'pestguard123', technician: 'tech2024' };
+const WP_ADMIN = '919956130707';
+let currentFilter = 'all';
+let allBookings = [];
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (ADMIN_CREDS[u] && ADMIN_CREDS[u] === p) {
+    localStorage.setItem('pg_admin_logged', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadBookings();
+    // Auto refresh every 30 seconds
+    setInterval(loadBookings, 30000);
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    setTimeout(() => document.getElementById('login-err').style.display = 'none', 3000);
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('pg_admin_logged');
+  location.reload();
+}
+
+// Auto login if session exists
+window.onload = () => {
+  if (localStorage.getItem('pg_admin_logged')) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadBookings();
+    setInterval(loadBookings, 30000);
+  }
+};
+
+function loadBookings() {
+  allBookings = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
+  updateStats();
+  renderBookings(allBookings);
+  updateNotifBadge();
+}
+
+function updateStats() {
+  const total = allBookings.length;
+  const today = new Date().toISOString().split('T')[0];
+  const newToday = allBookings.filter(b => b.createdAt && b.createdAt.includes(new Date().toLocaleDateString('en-IN'))).length;
+  const done = allBookings.filter(b => b.status === 'done').length;
+  const rev = allBookings.filter(b => b.payVerified || (b.payment||'').includes('Cash')).reduce((sum, b) => {
+    const n = parseInt((b.amount || '').replace(/[^0-9]/g, '')) || 0;
+    return sum + n;
+  }, 0);
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-new').textContent = allBookings.filter(b => b.status === 'New').length;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-rev').textContent = rev > 0 ? '₹' + rev.toLocaleString('en-IN') : '₹0';
+}
+
+function updateNotifBadge() {
+  const newCount = allBookings.filter(b => b.status === 'New').length;
+  const nb = document.getElementById('notif');
+  const utrCount = allBookings.filter(b => (b.payment||'').includes('Verification Pending') && !b.payVerified).length;
+  const utrTab = document.getElementById('utr-tab');
+  if (utrTab) utrTab.textContent = utrCount > 0 ? `⏳ UTR Verify (${utrCount})` : '⏳ UTR Verify';
+  const total = newCount + utrCount;
+  if (total > 0) { nb.style.display = 'flex'; nb.textContent = total; }
+  else { nb.style.display = 'none'; }
+}
+
+function filterBookings(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  searchBookings();
+}
+
+function searchBookings() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let filtered = allBookings;
+  if (currentFilter === 'utr_pending') {
+    filtered = filtered.filter(b => (b.payment||'').includes('Verification Pending') && !b.payVerified);
+  } else if (currentFilter !== 'all') {
+    filtered = filtered.filter(b => b.status && b.status.toLowerCase() === currentFilter.toLowerCase());
+  }
+  if (q) {
+    filtered = filtered.filter(b =>
+      (b.name||'').toLowerCase().includes(q) ||
+      (b.phone||'').includes(q) ||
+      (b.id||'').toLowerCase().includes(q) ||
+      (b.service||'').toLowerCase().includes(q)
+    );
+  }
+  renderBookings(filtered);
+}
+
+function getPayBadge(b) {
+  const p = b.payment || '';
+  if (b.payVerified) return '<span class="paid-badge">✅ Paid & Verified</span>';
+  if (p.includes('Verification Pending')) return '<span class="pending-badge">⏳ UTR Verify Karo</span>';
+  if (p.includes('Payment Failed')) return '<span class="failed-badge">❌ Payment Failed</span>';
+  if (p.includes('Cash')) return '<span class="cod-badge">💵 Cash on Service</span>';
+  if (p.includes('Paid')) return '<span class="paid-badge">✅ Paid</span>';
+  return '<span class="cod-badge">—</span>';
+}
+
+function getUTRBox(b, idx) {
+  const p = b.payment || '';
+  if (!p.includes('UTR:') || b.payVerified) return '';
+  // Extract UTR from payment string like "UPI · UTR: 429876543210 · Verification Pending"
+  const match = p.match(/UTR:\s*([A-Za-z0-9]+)/);
+  const utr = match ? match[1] : '—';
+  return `
+  <div class="utr-verify-box">
+    <div class="utr-verify-title">⚠️ UTR Verification Pending — Apna bank check karo</div>
+    <div class="utr-number">UTR: ${utr}</div>
+    <div style="font-size:11px;color:#666;text-align:center;margin-bottom:8px;">Amount: ${b.amount} · UPI ID: itzbhavesh011@oksbi</div>
+    <div class="utr-actions">
+      <button class="btn-pay-verify" onclick="verifyPayment(${idx}, '${utr}')">✅ Payment Mili — Verify Karo</button>
+      <button class="btn-pay-reject" onclick="rejectPayment(${idx})">❌ Nahi Mili</button>
+    </div>
+  </div>`;
+}
+
+function verifyPayment(idx, utr) {
+  if (!confirm('Confirm karo: ₹' + (allBookings[idx].amount||'') + ' aapke account mein aa gayi?\nUTR: ' + utr)) return;
+  allBookings[idx].payVerified = true;
+  allBookings[idx].payment = 'UPI · UTR: ' + utr + ' · Paid ✓';
+  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
+  loadBookings();
+  alert('✅ Payment verified! Booking #' + allBookings[idx].id + ' ab "Paid" mark ho gayi.');
+}
+
+function rejectPayment(idx) {
+  const reason = prompt('Reason likhein (optional):') || 'Payment nahi mili';
+  allBookings[idx].payment = 'UPI · Payment Failed · ' + reason;
+  allBookings[idx].payVerified = false;
+  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
+  loadBookings();
+}
+
+function renderBookings(list) {
+  const container = document.getElementById('bookings-list');
+  if (!list || list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">Koi booking nahi mili</div><div class="empty-sub">Jab customer booking kare, yahan dikhegi</div></div>`;
+    return;
+  }
+
+  const serviceIcons = {
+    'Cockroach Control': '🪳',
+    'Mosquito Control': '🦟',
+    'Termite Treatment': '🐜',
+    'Complete Home Package': '🏠'
+  };
+
+  container.innerHTML = list.map((b, idx) => {
+    const status = b.status || 'New';
+    const statusClass = status.toLowerCase().replace(' ','_');
+    const badgeClass = {
+      'New': 'badge-new',
+      'confirmed': 'badge-confirmed',
+      'done': 'badge-done',
+      'cancelled': 'badge-cancelled'
+    }[status] || 'badge-pending';
+
+    const icon = serviceIcons[b.service] || '🪳';
+
+
+    // Find real index in allBookings
+    const realIdx = allBookings.findIndex(x => x.id === b.id);
+
+    return `
+    <div class="booking-card status-${statusClass}" id="card-${b.id}">
+      <div class="bc-header">
+        <div>
+          <div class="bc-id">#${b.id}</div>
+          <div class="bc-time">🕐 ${b.createdAt || '—'}</div>
+        </div>
+        <span class="status-badge ${badgeClass}">${status === 'New' ? '🆕 New' : status === 'confirmed' ? '✅ Confirmed' : status === 'done' ? '🏁 Done' : '❌ Cancelled'}</span>
+      </div>
+
+      <div class="bc-service">${icon} ${b.service || '—'}</div>
+
+      <div class="bc-grid">
+        <div class="bc-item"><div class="k">👤 Customer</div><div class="v">${b.name||'—'}</div></div>
+        <div class="bc-item"><div class="k">📞 Phone</div><div class="v">${b.phone||'—'}</div></div>
+        <div class="bc-item"><div class="k">📅 Date</div><div class="v">${b.date||'—'}</div></div>
+        <div class="bc-item"><div class="k">⏰ Time</div><div class="v">${b.time||'—'}</div></div>
+        <div class="bc-item"><div class="k">🏠 Property</div><div class="v">${(b.proptype||'—').replace(/[^\w\s]/g,'').trim()}</div></div>
+        <div class="bc-item"><div class="k">📏 Area</div><div class="v">${b.area||'—'}</div></div>
+      </div>
+
+      <div class="bc-addr"><div class="k">📍 Address</div><div class="v">${b.address||'—'}</div></div>
+
+      <div class="bc-payment">
+        <div class="pay-info"><div class="k">Total Amount</div><div class="v">${b.amount||'—'}</div></div>
+        <div class="pay-method" id="pay-badge-${b.id}">${getPayBadge(b)}</div>
+      </div>
+
+      ${getUTRBox(b, realIdx)}
+
+      <div class="bc-actions">
+        ${status === 'New' ? `<button class="action-btn btn-confirm" onclick="updateStatus(${realIdx},'confirmed')">✅ Confirm</button>` : ''}
+        ${status === 'confirmed' ? `<button class="action-btn btn-done" onclick="updateStatus(${realIdx},'done')">🏁 Mark Done</button>` : ''}
+        ${status !== 'cancelled' && status !== 'done' ? `<button class="action-btn btn-cancel" onclick="updateStatus(${realIdx},'cancelled')">❌ Cancel</button>` : ''}
+        <button class="action-btn btn-call" onclick="callCustomer('${b.phone}')">📞 Call</button>
+        <button class="action-btn btn-wp" onclick="wpCustomer('${b.phone}','${b.name}','${b.id}','${b.service}','${b.date}','${b.time}')">💬 WP</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateStatus(idx, newStatus) {
+  if (idx < 0 || idx >= allBookings.length) return;
+  allBookings[idx].status = newStatus;
+  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
+  loadBookings();
+}
+
+function callCustomer(phone) {
+  if (phone) window.open('tel:' + phone);
+}
+
+function wpCustomer(phone, name, id, service, date, time) {
+  const msg = `Hello ${name}! 👋\n\nAapki PestGuard booking confirm ho gayi hai.\n\n📋 Booking ID: ${id}\n🪳 Service: ${service}\n📅 Date: ${date} · ${time}\n\nHumara technician aapke time par pahunchega. Koi sawaal ho to hume batayein. ✅`;
+  window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function wpAdmin() {
+  const newB = allBookings.filter(b => b.status === 'New');
+  if (newB.length === 0) { alert('Koi new booking nahi hai abhi'); return; }
+  const b = newB[0];
+  const msg = `🛡️ PestGuard Admin\n\nNew booking hai:\n#${b.id}\n${b.service}\n${b.date} · ${b.time}\n${b.name} - ${b.phone}`;
+  window.open(`https://wa.me/${WP_ADMIN}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function addDemoBooking() {
+  const choice = confirm('UTR Verification Pending wali demo booking add karein?\n\n✅ OK = UTR Pending (payment verify test karo)\n❌ Cancel = Normal new booking');
+  const services = ['Cockroach Control','Mosquito Control','Termite Treatment','Complete Home Package'];
+  const times = ['8:00 AM','10:00 AM','2:00 PM','4:00 PM','6:00 PM'];
+  const names = ['Rajesh Kumar','Priya Sharma','Amit Patel','Sunita Singh','Rohit Verma'];
+  const fakeUTR = '4' + Math.floor(10000000000 + Math.random()*90000000000);
+  const demo = {
+    id: 'PG' + Date.now().toString().slice(-6),
+    service: services[Math.floor(Math.random()*services.length)],
+    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    time: times[Math.floor(Math.random()*times.length)],
+    proptype: '🏠 Home / Flat',
+    area: 'Up to 500 sq ft',
+    name: names[Math.floor(Math.random()*names.length)],
+    phone: '9' + Math.floor(100000000 + Math.random()*900000000),
+    address: 'Flat 301, Green Valley Society, Sector 15, Ahilyanagar',
+    payment: choice ? `UPI · UTR: ${fakeUTR} · Verification Pending` : 'Cash on Service · Pending',
+    amount: '₹2,500',
+    status: 'New',
+    payVerified: false,
+    createdAt: new Date().toLocaleString('en-IN')
+  };
+  const b = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
+  b.unshift(demo);
+  localStorage.setItem('pg_bookings', JSON.stringify(b));
+  loadBookings();
+  alert(`✅ Demo booking add ho gayi: #${demo.id}\n${choice ? '⏳ UTR Verify tab mein dikhegi!' : '💵 Cash booking'}`);
+}
+</script>
+</body>
+</html>
