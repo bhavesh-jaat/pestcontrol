@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PestGuard India – Pest Control Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green:#1B6B35;--green2:#27AE60;--green-light:#E8F5E9;
+  --orange:#E65100;--orange2:#FF8C00;--orange-light:#FFF3E0;
+  --bg:#FAFAFA;--white:#fff;--text:#1a1a1a;--muted:#666;
+  --border:#e0e0e0;--r:14px;--r2:10px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px;}
+
+/* HERO */
+.hero{background:linear-gradient(150deg,#0d4a20 0%,#1B6B35 55%,#27AE60 100%);color:#fff;padding:28px 20px 32px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.06);}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.04);}
+.logo{font-family:'Baloo 2',cursive;font-size:26px;font-weight:700;letter-spacing:0.5px;margin-bottom:4px;}
+.logo span{color:#7DFFB3;}
+.hero-tagline{font-size:12px;opacity:0.75;margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;}
+.hero h1{font-size:22px;font-weight:700;line-height:1.35;margin-bottom:8px;}
+.hero p{font-size:13px;opacity:0.82;margin-bottom:22px;line-height:1.6;}
+.price-pill{display:inline-flex;align-items:center;gap:10px;background:#FF8C00;color:#fff;padding:12px 28px;border-radius:40px;font-size:20px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,0.25);}
+.price-pill small{font-size:12px;font-weight:400;opacity:0.9;}
+
+/* TRUST */
+.trust-bar{display:flex;background:#fff;border-bottom:1px solid var(--border);}
+.trust-item{flex:1;padding:12px 6px;text-align:center;border-right:1px solid var(--border);font-size:11px;color:var(--muted);}
+.trust-item:last-child{border-right:none;}
+.trust-item strong{display:block;font-size:15px;color:var(--green);font-weight:600;margin-bottom:2px;}
+
+/* STEPS */
+.steps-bar{display:flex;align-items:center;justify-content:center;gap:0;padding:16px 20px;background:#fff;border-bottom:1px solid var(--border);}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.step.active{color:var(--green);font-weight:600;}
+.step.done{color:var(--green2);}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--border);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
+.step.active .step-num{background:var(--green);}
+.step.done .step-num{background:var(--green2);}
+.step-divider{width:24px;height:2px;background:var(--border);margin:0 4px;}
+.step-divider.done{background:var(--green2);}
+
+/* SECTION */
+.section{background:#fff;margin:12px 16px;border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.section-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--text);}
+.section-title .icon{width:32px;height:32px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:16px;}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.service-card{border:2px solid var(--border);border-radius:var(--r2);padding:14px 10px;cursor:pointer;transition:all 0.18s;background:#fff;position:relative;text-align:center;}
+.service-card:hover{border-color:var(--green);box-shadow:0 0 0 3px rgba(27,107,53,0.1);}
+.service-card.selected{border-color:var(--green);background:var(--green-light);}
+.service-card .chk{position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;}
+.service-card .chk::after{content:'✓';color:#fff;font-size:10px;font-weight:700;}
+.service-card.selected .chk{display:flex;}
+.s-icon{font-size:26px;margin-bottom:6px;}
+.s-name{font-size:12px;font-weight:600;}
+.s-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block;font-weight:500;}
+.form-label .req{color:#e53935;}
+input[type=text],input[type=tel],input[type=date],select,textarea{
+  width:100%;padding:11px 14px;font-size:14px;font-family:'Poppins',sans-serif;
+  border:1.5px solid var(--border);border-radius:var(--r2);background:#fff;color:var(--text);
+  transition:border-color 0.15s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(27,107,53,0.1);}
+textarea{resize:none;}
+
+/* TIME SLOTS */
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.time-slot{padding:11px 6px;text-align:center;border:1.5px solid var(--border);border-radius:var(--r2);font-size:12px;cursor:pointer;transition:all 0.15s;background:#fff;}
+.time-slot:hover:not(.full){border-color:var(--green);background:var(--green-light);}
+.time-slot.selected{border:2px solid var(--green);background:var(--green-light);font-weight:600;}
+.time-slot.full{opacity:0.4;cursor:not-allowed;}
+.slot-tag{display:block;font-size:10px;color:var(--muted);margin-top:2px;}
+.time-slot.selected .slot-tag{color:var(--green);}
+
+/* PAYMENT */
+.pay-option{border:2px solid var(--border);border-radius:var(--r2);padding:14px;cursor:pointer;transition:all 0.18s;margin-bottom:10px;background:#fff;}
+.pay-option:hover{border-color:var(--orange2);}
+.pay-option.selected{border-color:var(--orange2);background:var(--orange-light);}
+.pay-header{display:flex;align-items:center;gap:12px;}
+.pay-logo{font-size:24px;width:40px;text-align:center;}
+.pay-name{font-size:14px;font-weight:600;}
+.pay-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.upi-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.upi-app{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:500;transition:all 0.15s;}
+.upi-app:hover{border-color:var(--orange2);background:var(--orange-light);}
+.upi-app.active{border-color:var(--orange2);background:var(--orange-light);}
+
+/* SUMMARY */
+.summary-box{background:linear-gradient(135deg,#f0fdf4,#e8f5e9);border:1.5px solid #a5d6a7;border-radius:var(--r);padding:16px 18px;margin:12px 16px;}
+.sum-title{font-size:13px;font-weight:600;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px dashed #c8e6c9;}
+.sum-row:last-child{border:none;padding-top:10px;margin-top:4px;}
+.sum-row .label{color:var(--muted);}
+.sum-row .val{font-weight:500;}
+.sum-total .label{font-size:15px;font-weight:700;color:var(--text);}
+.sum-total .val{font-size:18px;font-weight:700;color:var(--green);}
+
+/* BUTTONS */
+.btn-book{
+  display:block;width:calc(100% - 32px);margin:0 16px 12px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;border:none;border-radius:var(--r);
+  padding:17px;font-size:16px;font-weight:700;font-family:'Poppins',sans-serif;
+  cursor:pointer;box-shadow:0 4px 20px rgba(27,107,53,0.35);transition:all 0.2s;
+  letter-spacing:0.3px;
+}
+.btn-book:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(27,107,53,0.4);}
+.btn-book:active{transform:translateY(0);}
+.btn-wp{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:calc(100% - 32px);margin:0 16px 16px;
+  background:#25D366;color:#fff;border:none;border-radius:var(--r);
+  padding:14px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
+  cursor:pointer;box-shadow:0 4px 16px rgba(37,211,102,0.3);transition:all 0.2s;
+}
+.btn-wp:hover{background:#1da851;}
+.wp-icon{font-size:20px;}
+
+/* UPI MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal-sheet{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:24px 20px 40px;transform:translateY(100%);transition:transform 0.3s ease;max-height:94vh;overflow-y:auto;}
+.modal-overlay.show .modal-sheet{transform:translateY(0);}
+.modal-drag{width:40px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 18px;}
+
+/* Payment Steps in modal */
+.pay-steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:20px;}
+.ps{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#bbb;}
+.ps.active{color:var(--green);}
+.ps.done{color:var(--green2);}
+.ps-num{width:22px;height:22px;border-radius:50%;background:#eee;color:#999;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.ps.active .ps-num{background:var(--green);color:#fff;}
+.ps.done .ps-num{background:var(--green2);color:#fff;}
+.ps-line{width:20px;height:2px;background:#eee;border-radius:2px;}
+.ps-line.done{background:var(--green2);}
+
+.pay-step-content{display:none;}
+.pay-step-content.active{display:block;}
+
+/* Step 1 — Choose app */
+.modal-title{font-size:16px;font-weight:700;text-align:center;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px;line-height:1.5;}
+.upi-id-box{background:linear-gradient(135deg,#f0fdf4,#e8f5e9);border:1.5px solid #a5d6a7;border-radius:var(--r2);padding:14px;text-align:center;margin-bottom:12px;position:relative;}
+.upi-id-box .label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.upi-id-box .upiid{font-size:17px;font-weight:700;color:var(--green);letter-spacing:0.5px;}
+.copy-upi-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--green);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;}
+.upi-amount-box{background:var(--orange-light);border:1.5px solid #ffcc80;border-radius:var(--r2);padding:12px;text-align:center;margin-bottom:16px;}
+.upi-amount-box .label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.upi-amount-box .amount{font-size:24px;font-weight:800;color:var(--orange);}
+.upi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.upi-card{border:2px solid var(--border);border-radius:var(--r2);padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.18s;background:#fff;}
+.upi-card:hover{border-color:var(--orange2);transform:translateY(-2px);box-shadow:0 4px 12px rgba(230,81,0,0.15);}
+.upi-card:active{transform:scale(0.97);}
+.upi-app-icon{font-size:30px;margin-bottom:6px;}
+.upi-app-name{font-size:13px;font-weight:700;}
+.upi-app-tag{font-size:10px;color:var(--muted);margin-top:2px;}
+.btn-paid-app{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;margin-top:4px;}
+
+/* Step 2 — Enter UTR */
+.utr-info-box{background:#fff8e1;border:1.5px solid #ffe082;border-radius:var(--r2);padding:14px;margin-bottom:16px;}
+.utr-info-title{font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px;}
+.utr-info-steps{font-size:12px;color:var(--text);line-height:1.8;}
+.utr-info-steps span{display:block;padding-left:4px;}
+.utr-label{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text);}
+.utr-input{width:100%;padding:14px;font-size:16px;font-family:'Poppins',sans-serif;border:2px solid var(--border);border-radius:var(--r2);text-align:center;letter-spacing:2px;font-weight:700;transition:border-color 0.15s;margin-bottom:8px;}
+.utr-input:focus{outline:none;border-color:var(--green);}
+.utr-input.valid{border-color:var(--green2);background:#f0fdf4;}
+.utr-input.invalid{border-color:#e53935;background:#ffebee;}
+.utr-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px;}
+.utr-hint.ok{color:var(--green);font-weight:600;}
+.utr-hint.bad{color:#e53935;font-weight:600;}
+.btn-verify{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s;}
+.btn-verify:disabled{background:#bdbdbd;cursor:not-allowed;}
+.btn-back-step{width:100%;background:#fff;border:1.5px solid var(--border);color:var(--muted);border-radius:var(--r2);padding:11px;font-size:13px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;margin-top:8px;}
+
+/* Step 3 — Pending verification */
+.pending-icon{font-size:52px;text-align:center;margin:8px 0 12px;}
+.pending-title{font-size:17px;font-weight:700;text-align:center;margin-bottom:8px;}
+.pending-sub{font-size:13px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px;}
+.utr-confirm-box{background:#f8fffe;border:1.5px solid #a5d6a7;border-radius:var(--r2);padding:14px;margin-bottom:20px;}
+.ucb-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px dashed #c8e6c9;}
+.ucb-row:last-child{border:none;}
+.ucb-row .k{color:var(--muted);}
+.ucb-row .v{font-weight:700;}
+.pending-note{background:#fff8e1;border:1.5px solid #ffe082;border-radius:var(--r2);padding:12px;font-size:12px;color:#e65100;text-align:center;line-height:1.6;margin-bottom:16px;}
+.btn-finalize{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;}
+
+/* SUCCESS */
+.success-page{display:none;padding:40px 20px;text-align:center;}
+.success-icon{width:80px;height:80px;border-radius:50%;background:var(--green-light);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:40px;border:3px solid #a5d6a7;}
+.success-num{font-size:24px;font-weight:800;color:var(--green);margin-bottom:4px;}
+.success-msg{font-size:16px;font-weight:600;margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+.booking-detail-card{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);text-align:left;margin-bottom:16px;}
+.bd-row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border);}
+.bd-row:last-child{border:none;}
+.bd-row .k{color:var(--muted);}
+.bd-row .v{font-weight:600;}
+.instructions{background:var(--orange-light);border:1.5px solid #ffcc80;border-radius:var(--r2);padding:14px;text-align:left;margin-bottom:20px;}
+.inst-title{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;}
+.inst-item{font-size:12px;color:var(--text);padding:3px 0;padding-left:16px;position:relative;line-height:1.5;}
+.inst-item::before{content:'•';position:absolute;left:4px;color:var(--orange);}
+.btn-new{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;margin-bottom:10px;}
+.btn-wp2{width:100%;background:#25D366;color:#fff;border:none;border-radius:var(--r2);padding:14px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;}
+.nav-link{display:block;text-align:center;margin:10px 16px;font-size:12px;color:var(--green);text-decoration:none;font-weight:500;}
+
+/* VALIDATION */
+.err{border-color:#e53935!important;box-shadow:0 0 0 3px rgba(229,57,53,0.1)!important;}
+.err-msg{font-size:11px;color:#e53935;margin-top:4px;display:none;}
+.err-msg.show{display:block;}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo">🛡️ Pest<span>Guard</span></div>
+  <div class="hero-tagline">India's Trusted Pest Control</div>
+  <h1>Cockroach, Mosquito &amp; Termite<br>Control Service</h1>
+  <p>घर और Office दोनों के लिए · Professional Treatment · Same Day Available</p>
+  <div class="price-pill">₹2,500 <small>से शुरू / session</small></div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><strong>500+</strong>Bookings</div>
+  <div class="trust-item"><strong>4.9★</strong>Rating</div>
+  <div class="trust-item"><strong>2 Hr</strong>Response</div>
+  <div class="trust-item"><strong>Safe</strong>Chemicals</div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="step active" id="step1"><div class="step-num">1</div>Service</div>
+  <div class="step-divider" id="div1"></div>
+  <div class="step" id="step2"><div class="step-num">2</div>Details</div>
+  <div class="step-divider" id="div2"></div>
+  <div class="step" id="step3"><div class="step-num">3</div>Payment</div>
+</div>
+
+<!-- MAIN FORM -->
+<div id="main-form">
+
+<!-- SERVICE SELECTION -->
+<div class="section">
+  <div class="section-title"><div class="icon">🪳</div>Service Type Select Karo</div>
+  <div class="services-grid" id="services">
+    <div class="service-card selected" onclick="selectService(this,'Cockroach Control','2500')">
+      <div class="chk"></div>
+      <div class="s-icon">🪳</div>
+      <div class="s-name">Cockroach Control</div>
+      <div class="s-sub">Kitchen, bathroom, drain</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'Mosquito Control','2500')">
+      <div class="chk"></div>
+      <div class="s-icon">🦟</div>
+      <div class="s-name">Mosquito Control</div>
+      <div class="s-sub">Fogging + spray</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'Termite Treatment','2500')">
+      <div class="chk"></div>
+      <div class="s-icon">🐜</div>
+      <div class="s-name">Termite Treatment</div>
+      <div class="s-sub">Wood &amp; wall protection</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'Complete Home Package','4999')">
+      <div class="chk"></div>
+      <div class="s-icon">🏠</div>
+      <div class="s-name">Complete Home</div>
+      <div class="s-sub">All pests · Full house</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTY & AREA -->
+<div class="section">
+  <div class="section-title"><div class="icon">🏠</div>Property Details</div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Property Type <span class="req">*</span></label>
+      <select id="proptype">
+        <option>🏠 Home / Flat</option>
+        <option>🏢 Office / Shop</option>
+        <option>🏨 Hotel / Restaurant</option>
+        <option>🏗️ Under Construction</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Area (sq ft) <span class="req">*</span></label>
+      <select id="area" onchange="updatePrice()">
+        <option value="2500">Up to 500 sq ft</option>
+        <option value="3500">500–1000 sq ft</option>
+        <option value="5000">1000–2000 sq ft</option>
+        <option value="0">2000+ sq ft (Quote)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- DATE & TIME -->
+<div class="section">
+  <div class="section-title"><div class="icon">📅</div>Date &amp; Time</div>
+  <div class="form-group">
+    <label class="form-label">Booking Date <span class="req">*</span></label>
+    <input type="date" id="bookdate"/>
+    <div class="err-msg" id="err-date">Date select karo</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Time Slot <span class="req">*</span></label>
+    <div class="time-grid" id="timegrid">
+      <div class="time-slot" onclick="selectTime(this,'8:00 AM')">8:00 AM<span class="slot-tag">Morning</span></div>
+      <div class="time-slot" onclick="selectTime(this,'10:00 AM')">10:00 AM<span class="slot-tag">Morning</span></div>
+      <div class="time-slot full">12:00 PM<span class="slot-tag">Booked ✗</span></div>
+      <div class="time-slot" onclick="selectTime(this,'2:00 PM')">2:00 PM<span class="slot-tag">Afternoon</span></div>
+      <div class="time-slot" onclick="selectTime(this,'4:00 PM')">4:00 PM<span class="slot-tag">Afternoon</span></div>
+      <div class="time-slot" onclick="selectTime(this,'6:00 PM')">6:00 PM<span class="slot-tag">Evening</span></div>
+    </div>
+    <div class="err-msg" id="err-time">Time slot select karo</div>
+  </div>
+</div>
+
+<!-- CUSTOMER INFO -->
+<div class="section">
+  <div class="section-title"><div class="icon">👤</div>Aapki Details</div>
+  <div class="form-group">
+    <label class="form-label">Full Name <span class="req">*</span></label>
+    <input type="text" id="fname" placeholder="Jaise: Rahul Sharma"/>
+    <div class="err-msg" id="err-name">Naam likhna zaroori hai</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Mobile Number <span class="req">*</span></label>
+    <input type="tel" id="fphone" placeholder="9XXXXXXXXX" maxlength="10"/>
+    <div class="err-msg" id="err-phone">Valid 10 digit mobile number likhein</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Complete Address <span class="req">*</span></label>
+    <textarea id="faddr" rows="3" placeholder="Flat no, Building, Society, Area, City..."></textarea>
+    <div class="err-msg" id="err-addr">Address likhna zaroori hai</div>
+  </div>
+</div>
+
+<!-- PAYMENT METHOD -->
+<div class="section">
+  <div class="section-title"><div class="icon">💳</div>Payment Method</div>
+
+  <div class="pay-option selected" id="pay-upi" onclick="selectPay('upi')">
+    <div class="pay-header">
+      <div class="pay-logo">📲</div>
+      <div>
+        <div class="pay-name">UPI Payment (Recommended)</div>
+        <div class="pay-sub">PhonePe · GPay · Paytm · BHIM · Koi bhi UPI</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pay-option" id="pay-cod" onclick="selectPay('cod')">
+    <div class="pay-header">
+      <div class="pay-logo">💵</div>
+      <div>
+        <div class="pay-name">Cash on Service</div>
+        <div class="pay-sub">Technician aane ke baad payment karo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <div class="sum-title">📋 Booking Summary</div>
+  <div class="sum-row"><span class="label">Service</span><span class="val" id="s-service">Cockroach Control</span></div>
+  <div class="sum-row"><span class="label">Date &amp; Time</span><span class="val" id="s-datetime">Not selected</span></div>
+  <div class="sum-row"><span class="label">Payment</span><span class="val" id="s-pay">UPI</span></div>
+  <div class="sum-row sum-total"><span class="label">Total Amount</span><span class="val" id="s-price">₹2,500</span></div>
+</div>
+
+<button class="btn-book" onclick="proceedBooking()">
+  ✅ Booking Confirm Karo
+</button>
+
+<button class="btn-wp" onclick="openWhatsApp()">
+  <span class="wp-icon">💬</span> WhatsApp pe Poochho — Instant Reply
+</button>
+
+<a href="admin.html" class="nav-link">🔐 Admin / Technician Panel →</a>
+
+</div><!-- end main-form -->
+
+<!-- SUCCESS PAGE -->
+<div class="success-page" id="success-page">
+  <div class="success-icon">✅</div>
+  <div class="success-num" id="suc-num">Booking Confirmed!</div>
+  <div class="success-msg">Shukriya! Aapki booking ho gayi 🎉</div>
+  <div class="success-sub">Hamara technician aapke selected time par pahunchega.<br>Confirmation SMS aapke number par bhej diya hai.</div>
+
+  <div class="booking-detail-card">
+    <div class="bd-row"><span class="k">Booking ID</span><span class="v" id="bd-id">—</span></div>
+    <div class="bd-row"><span class="k">Service</span><span class="v" id="bd-service">—</span></div>
+    <div class="bd-row"><span class="k">Date &amp; Time</span><span class="v" id="bd-dt">—</span></div>
+    <div class="bd-row"><span class="k">Name</span><span class="v" id="bd-name">—</span></div>
+    <div class="bd-row"><span class="k">Phone</span><span class="v" id="bd-phone">—</span></div>
+    <div class="bd-row"><span class="k">Payment</span><span class="v" id="bd-pay">—</span></div>
+    <div class="bd-row"><span class="k">Amount</span><span class="v" id="bd-amount">—</span></div>
+  </div>
+
+  <div class="instructions">
+    <div class="inst-title">📋 Service ke liye tayaar raho:</div>
+    <div class="inst-item">Service se 1 ghante pehle kitchen clear kar lein</div>
+    <div class="inst-item">Saaf paani ke bartan dhak ke rakhein</div>
+    <div class="inst-item">Bachhe aur pets ko service ke time bahar rakhein</div>
+    <div class="inst-item">Service ke baad 2 ghante windows band rakhein</div>
+    <div class="inst-item">Spray ke 4 ghante baad mopping karein</div>
+  </div>
+
+  <button class="btn-new" onclick="newBooking()">🔄 Nayi Booking Karo</button>
+  <button class="btn-wp2" onclick="shareWhatsApp()">💬 WhatsApp pe Share Karo</button>
+</div>
+
+<!-- UPI PAYMENT MODAL — 3 STEP -->
+<div class="modal-overlay" id="upi-modal">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
+
+    <!-- Progress Steps -->
+    <div class="pay-steps">
+      <div class="ps active" id="ps1"><div class="ps-num">1</div>Pay</div>
+      <div class="ps-line" id="psline1"></div>
+      <div class="ps" id="ps2"><div class="ps-num">2</div>UTR</div>
+      <div class="ps-line" id="psline2"></div>
+      <div class="ps" id="ps3"><div class="ps-num">3</div>Done</div>
+    </div>
+
+    <!-- STEP 1: Choose UPI App & Pay -->
+    <div class="pay-step-content active" id="modal-step1">
+      <div class="modal-title">💳 UPI se Payment Karo</div>
+      <div class="modal-sub">Niche apna UPI app choose karo — app khulegi aur payment ho jayegi</div>
+
+      <div class="upi-id-box">
+        <div class="label">Pay to UPI ID</div>
+        <div class="upiid" id="modal-upi-id">itzbhavesh011@oksbi</div>
+        <button class="copy-upi-btn" onclick="copyUPI()">Copy</button>
+      </div>
+
+      <div class="upi-amount-box">
+        <div class="label">Pay Karna Hai</div>
+        <div class="amount" id="modal-amount">₹2,500</div>
+      </div>
+
+      <div class="upi-grid">
+        <div class="upi-card" onclick="openUPIApp('phonepe')">
+          <div class="upi-app-icon">📱</div>
+          <div class="upi-app-name">PhonePe</div>
+          <div class="upi-app-tag">Tap to open</div>
+        </div>
+        <div class="upi-card" onclick="openUPIApp('gpay')">
+          <div class="upi-app-icon">🔵</div>
+          <div class="upi-app-name">Google Pay</div>
+          <div class="upi-app-tag">Tap to open</div>
+        </div>
+        <div class="upi-card" onclick="openUPIApp('paytm')">
+          <div class="upi-app-icon">💙</div>
+          <div class="upi-app-name">Paytm</div>
+          <div class="upi-app-tag">Tap to open</div>
+        </div>
+        <div class="upi-card" onclick="openUPIApp('bhim')">
+          <div class="upi-app-icon">⚡</div>
+          <div class="upi-app-name">Any UPI App</div>
+          <div class="upi-app-tag">BHIM / Others</div>
+        </div>
+      </div>
+
+      <button class="btn-paid-app" onclick="goStep2()">✅ Maine Payment Kar Di — Aage Badho</button>
+    </div>
+
+    <!-- STEP 2: Enter UTR Number -->
+    <div class="pay-step-content" id="modal-step2">
+      <div class="modal-title">🔢 UTR / Transaction ID Dalo</div>
+
+      <div class="utr-info-box">
+        <div class="utr-info-title">📋 UTR number kahan milega?</div>
+        <div class="utr-info-steps">
+          <span>📱 <b>PhonePe:</b> History → Transaction → UTR No.</span>
+          <span>🔵 <b>GPay:</b> Payment → Transaction ID (last 12 digits)</span>
+          <span>💙 <b>Paytm:</b> Passbook → Transaction ID</span>
+          <span>⚡ <b>Bank App:</b> SMS mein "Ref No" ya "UTR No"</span>
+        </div>
+      </div>
+
+      <div class="utr-label">Transaction / UTR Number <span style="color:#e53935">*</span></div>
+      <input class="utr-input" type="text" id="utr-input"
+        placeholder="Jaise: 429876543210"
+        maxlength="22"
+        oninput="validateUTR(this)"
+      />
+      <div class="utr-hint" id="utr-hint">10–22 digit ka number dalo</div>
+
+      <button class="btn-verify" id="btn-verify" onclick="goStep3()" disabled>✅ Verify &amp; Booking Confirm Karo</button>
+      <button class="btn-back-step" onclick="goStep1()">← Wapas Jao</button>
+    </div>
+
+    <!-- STEP 3: Submitted — Pending Admin Approval -->
+    <div class="pay-step-content" id="modal-step3">
+      <div class="pending-icon">⏳</div>
+      <div class="pending-title">Payment Verification Pending</div>
+      <div class="pending-sub">Tumhara UTR number submit ho gaya hai.<br>Admin 15–30 minutes mein verify karega.</div>
+
+      <div class="utr-confirm-box">
+        <div class="ucb-row"><span class="k">UTR Number</span><span class="v" id="utr-display">—</span></div>
+        <div class="ucb-row"><span class="k">Amount</span><span class="v" id="utr-amount-display">—</span></div>
+        <div class="ucb-row"><span class="k">UPI ID</span><span class="v">itzbhavesh011@oksbi</span></div>
+        <div class="ucb-row"><span class="k">Status</span><span class="v" style="color:#e65100">🔄 Verification Pending</span></div>
+      </div>
+
+      <div class="pending-note">
+        ⚠️ Paid status tab hi show hoga jab admin UTR verify karega.<br>
+        Jaldi chahiye? WhatsApp karo: <b>9956130707</b>
+      </div>
+
+      <button class="btn-finalize" onclick="finalizePending()">📋 Booking Save Karo</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// CONFIG — Apna UPI ID yahan dalo
+const UPI_ID = 'itzbhavesh011@oksbi'; // ← CHANGE THIS to your actual UPI ID
+const UPI_NAME = 'PestGuard India';
+const WP_NUMBER = '919956130707';
+
+// STATE
+let state = {
+  service: 'Cockroach Control',
+  price: 2500,
+  time: null,
+  payMethod: 'upi',
+  bookingId: null
+};
+
+// Init date
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+document.getElementById('bookdate').value = tomorrow.toISOString().split('T')[0];
+document.getElementById('bookdate').min = new Date().toISOString().split('T')[0];
+
+function selectService(el, name, price) {
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.service = name;
+  state.price = parseInt(price);
+  updateSummary();
+}
+
+function selectTime(el, t) {
+  document.querySelectorAll('.time-slot:not(.full)').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.time = t;
+  updateSummary();
+}
+
+function selectPay(type) {
+  ['upi','cod'].forEach(p => document.getElementById('pay-'+p).classList.remove('selected'));
+  document.getElementById('pay-'+type).classList.add('selected');
+  state.payMethod = type;
+  document.getElementById('s-pay').textContent = type === 'upi' ? 'UPI' : 'Cash on Service';
+}
+
+function updatePrice() {
+  const v = parseInt(document.getElementById('area').value);
+  if (v > 0) state.price = v;
+  updateSummary();
+}
+
+function updateSummary() {
+  document.getElementById('s-service').textContent = state.service;
+  const date = document.getElementById('bookdate').value;
+  const dt = state.time ? (date ? date + ' · ' : '') + state.time : 'Not selected';
+  document.getElementById('s-datetime').textContent = dt;
+  document.getElementById('s-price').textContent = state.price > 0 ? '₹' + state.price.toLocaleString('en-IN') : 'Quote milega';
+}
+
+function validate() {
+  let ok = true;
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  const addr = document.getElementById('faddr').value.trim();
+  const date = document.getElementById('bookdate').value;
+
+  const show = (id, cond) => {
+    document.getElementById(id).classList.toggle('show', !cond);
+    return cond;
+  };
+
+  if (!show('err-name', name.length > 1)) ok = false;
+  if (!show('err-phone', /^[6-9]\d{9}$/.test(phone))) ok = false;
+  if (!show('err-addr', addr.length > 5)) ok = false;
+  if (!show('err-date', !!date)) ok = false;
+  if (!show('err-time', !!state.time)) ok = false;
+
+  // mark fields
+  document.getElementById('fname').classList.toggle('err', name.length <= 1);
+  document.getElementById('fphone').classList.toggle('err', !/^[6-9]\d{9}$/.test(phone));
+  document.getElementById('faddr').classList.toggle('err', addr.length <= 5);
+
+  return ok;
+}
+
+function proceedBooking() {
+  if (!validate()) {
+    document.querySelector('.err')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  if (state.payMethod === 'upi' && state.price > 0) {
+    document.getElementById('modal-upi-id').textContent = UPI_ID;
+    document.getElementById('modal-amount').textContent = '₹' + state.price.toLocaleString('en-IN');
+    document.getElementById('upi-modal').classList.add('show');
+  } else {
+    finalizeBooking('Cash on Service · Pending');
+  }
+}
+
+function openUPIApp(app) {
+  const amt = state.price;
+  const name = encodeURIComponent(UPI_NAME);
+  const note = encodeURIComponent('PestCtrl-' + document.getElementById('fname').value.trim().split(' ')[0]);
+  const id = encodeURIComponent(UPI_ID);
+  const upiBase = `upi://pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`;
+  const urls = {
+    phonepe: `phonepe://pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
+    gpay:    `tez://upi/pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
+    paytm:   `paytmmp://upi/pay?pa=${id}&pn=${name}&am=${amt}&cu=INR&tn=${note}`,
+    bhim:    upiBase
+  };
+  // Try deep link, fallback to standard UPI
+  const link = urls[app] || upiBase;
+  const a = document.createElement('a'); a.href = link; a.click();
+  setTimeout(() => { try { window.location.href = upiBase; } catch(e){} }, 1800);
+}
+
+function copyUPI() {
+  const txt = UPI_ID;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.copy-upi-btn');
+    btn.textContent = '✓ Copied!'; btn.style.background = '#27AE60';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.style.background = ''; }, 2000);
+  }).catch(() => { prompt('UPI ID copy karo:', txt); });
+}
+
+// ── Modal step navigation ──
+function goStep1() {
+  setModalStep(1);
+}
+function goStep2() {
+  setModalStep(2);
+  document.getElementById('utr-input').focus();
+}
+function goStep3() {
+  const utr = document.getElementById('utr-input').value.trim();
+  if (!isValidUTR(utr)) return;
+  document.getElementById('utr-display').textContent = utr;
+  document.getElementById('utr-amount-display').textContent = '₹' + state.price.toLocaleString('en-IN');
+  state.utr = utr;
+  setModalStep(3);
+}
+
+function setModalStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('modal-step'+i).classList.toggle('active', i===n);
+    const ps = document.getElementById('ps'+i);
+    ps.classList.remove('active','done');
+    if (i < n) ps.classList.add('done');
+    else if (i === n) ps.classList.add('active');
+    if (i < 3) {
+      const line = document.getElementById('psline'+i);
+      line.classList.toggle('done', i < n);
+    }
+  });
+}
+
+function isValidUTR(v) {
+  return v.length >= 10 && v.length <= 22 && /^[0-9A-Za-z]+$/.test(v);
+}
+
+function validateUTR(input) {
+  const v = input.value.trim();
+  const hint = document.getElementById('utr-hint');
+  const btn = document.getElementById('btn-verify');
+  if (v.length === 0) {
+    input.className = 'utr-input';
+    hint.textContent = '10–22 digit ka number dalo';
+    hint.className = 'utr-hint';
+    btn.disabled = true;
+  } else if (isValidUTR(v)) {
+    input.className = 'utr-input valid';
+    hint.textContent = '✓ Valid UTR number';
+    hint.className = 'utr-hint ok';
+    btn.disabled = false;
+  } else {
+    input.className = 'utr-input invalid';
+    hint.textContent = '✗ Sirf numbers/letters, 10–22 characters';
+    hint.className = 'utr-hint bad';
+    btn.disabled = true;
+  }
+}
+
+function finalizePending() {
+  document.getElementById('upi-modal').classList.remove('show');
+  // Save booking with UTR — status = Payment Pending (not Paid yet)
+  finalizeBooking('UPI · UTR: ' + state.utr + ' · Verification Pending');
+}
+
+function finalizeBooking(payStatus) {
+  const id = 'PG' + Date.now().toString().slice(-6);
+  state.bookingId = id;
+
+  const booking = {
+    id,
+    service: state.service,
+    date: document.getElementById('bookdate').value,
+    time: state.time,
+    proptype: document.getElementById('proptype').value,
+    area: document.getElementById('area').options[document.getElementById('area').selectedIndex].text,
+    name: document.getElementById('fname').value.trim(),
+    phone: document.getElementById('fphone').value.trim(),
+    address: document.getElementById('faddr').value.trim(),
+    payment: payStatus,
+    amount: state.price > 0 ? '₹' + state.price.toLocaleString('en-IN') : 'Quote pending',
+    status: 'New',
+    createdAt: new Date().toLocaleString('en-IN')
+  };
+
+  // Save to localStorage for admin panel
+  const bookings = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
+  bookings.unshift(booking);
+  localStorage.setItem('pg_bookings', JSON.stringify(bookings));
+
+  // Show success
+  showSuccess(booking);
+
+  // Auto WhatsApp notification
+  sendWPNotification(booking);
+}
+
+function showSuccess(b) {
+  document.getElementById('main-form').style.display = 'none';
+  document.getElementById('success-page').style.display = 'block';
+  window.scrollTo(0,0);
+
+  document.getElementById('suc-num').textContent = '# ' + b.id;
+  document.getElementById('bd-id').textContent = b.id;
+  document.getElementById('bd-service').textContent = b.service;
+  document.getElementById('bd-dt').textContent = b.date + ' · ' + b.time;
+  document.getElementById('bd-name').textContent = b.name;
+  document.getElementById('bd-phone').textContent = b.phone;
+  document.getElementById('bd-pay').textContent = b.payment;
+  document.getElementById('bd-amount').textContent = b.amount;
+}
+
+function sendWPNotification(b) {
+  // Sends pre-filled WhatsApp message to admin with booking details
+  const msg = `🛡️ *NEW BOOKING — PestGuard*
+━━━━━━━━━━━━━━
+📋 Booking ID: *${b.id}*
+🪳 Service: *${b.service}*
+📅 Date: *${b.date}*
+⏰ Time: *${b.time}*
+🏠 Property: ${b.proptype}
+📏 Area: ${b.area}
+━━━━━━━━━━━━━━
+👤 Name: *${b.name}*
+📞 Phone: *${b.phone}*
+📍 Address: ${b.address}
+━━━━━━━━━━━━━━
+💳 Payment: ${b.payment}
+💰 Amount: *${b.amount}*
+━━━━━━━━━━━━━━
+✅ Status: NEW BOOKING`;
+  const url = `https://wa.me/${WP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+function openWhatsApp() {
+  window.open(`https://wa.me/${WP_NUMBER}?text=${encodeURIComponent('Hello PestGuard! Mujhe pest control service ke baare mein information chahiye.')}`, '_blank');
+}
+
+function shareWhatsApp() {
+  const b = state.bookingId;
+  const msg = `Meri PestGuard booking confirm ho gayi! 🎉\nBooking ID: ${b}\nService: ${state.service}\nDate: ${document.getElementById('bookdate').value} · ${state.time}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function newBooking() {
+  location.reload();
+}
+
+// Close modal on outside click
+document.getElementById('upi-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
+</script>
+</body>
+</html>
