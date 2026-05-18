@@ -7,8 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyD7mMXs39JGi4pM7v6uBPe-MvAEv1v-Dtk",
+  authDomain:"pestguard-6b493.firebaseapp.com",
+  projectId:"pestguard-6b493",
+  storageBucket:"pestguard-6b493.firebasestorage.app",
+  messagingSenderId:"962252001505",
+  appId:"1:962252001505:web:08e905f97908bdb65aa7a0"
+});
+window.db = firebase.firestore();
+console.log('Firebase ready');
+</script>
 <style>
-/* ========== BOOKING PAGE CSS ========== */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -257,9 +270,7 @@ textarea{resize:none;}
 #qr-canvas{display:block;}
 .qr-note{font-size:11px;color:var(--muted);margin-top:8px;}
 
-
-/* ========== ADMIN PAGE CSS ========== */
-.pg-admin { display:none; }
+#admin-page{display:none;}
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -397,27 +408,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .add-demo-btn{display:block;width:calc(100% - 28px);margin:0 14px 14px;background:#fff3e0;border:1.5px solid #ffcc80;color:#e65100;border-radius:var(--r2);padding:10px;font-size:13px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;}
 .wp-admin{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 28px);margin:0 14px 20px;background:#25D366;color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;}
 
-
-/* ========== PAGE SWITCHER ========== */
-.page-toggle-btn {
-  position:fixed;bottom:20px;right:20px;z-index:9999;
-  background:linear-gradient(135deg,#1B6B35,#27AE60);
-  color:#fff;border:none;border-radius:50px;
-  padding:12px 20px;font-size:13px;font-weight:700;
-  font-family:'Poppins',sans-serif;cursor:pointer;
-  box-shadow:0 4px 20px rgba(27,107,53,0.4);
-  display:flex;align-items:center;gap:8px;
-  transition:all 0.2s;
-}
-.page-toggle-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(27,107,53,0.5);}
-#booking-page { display:block; }
+.pg-switch-btn{position:fixed;bottom:20px;right:20px;z-index:9999;background:linear-gradient(135deg,#1B6B35,#27AE60);color:#fff;border:none;border-radius:50px;padding:12px 20px;font-size:13px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(27,107,53,0.4);transition:all 0.2s;}
+.pg-switch-btn:hover{transform:translateY(-2px);}
 </style>
 </head>
 <body>
-
-<!-- ========== BOOKING PAGE ========== -->
 <div id="booking-page">
-
 
 <!-- HERO -->
 <div class="hero">
@@ -727,7 +723,99 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
+
+</div>
+<div id="admin-page">
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🛡️ PestGuard</div>
+    <div class="login-sub">Admin / Technician Login</div>
+    <label class="login-label">Username</label>
+    <input class="login-input" type="text" id="login-user" placeholder="Bhavesh" />
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="login-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-err" id="login-err">❌ Wrong username or password</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:16px;">Login: Bhavesh / Bhavesh@2004</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+
+  <div class="admin-header">
+    <div class="admin-logo">🛡️ PestGuard
+      <span>Admin Panel</span>
+    </div>
+    <div class="header-right">
+      <div id="notif" class="notif-badge" style="display:none">0</div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">📋 Total Bookings</div>
+      <div class="stat-val green" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🆕 New Today</div>
+      <div class="stat-val blue" id="stat-new">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">✅ Completed</div>
+      <div class="stat-val" id="stat-done">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">💰 Revenue</div>
+      <div class="stat-val orange" id="stat-rev">₹0</div>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="filterBookings('all',this)">All</button>
+    <button class="ftab" onclick="filterBookings('New',this)">🆕 New</button>
+    <button class="ftab alert-tab" id="utr-tab" onclick="filterBookings('utr_pending',this)">⏳ UTR Verify</button>
+    <button class="ftab" onclick="filterBookings('confirmed',this)">✅ Confirmed</button>
+    <button class="ftab" onclick="filterBookings('done',this)">🏁 Done</button>
+    <button class="ftab" onclick="filterBookings('cancelled',this)">❌ Cancelled</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="search-input" placeholder="Name, phone, booking ID search karo..." oninput="searchBookings()"/>
+  </div>
+
+  <!-- LIST -->
+  <div class="bookings-list" id="bookings-list"></div>
+
+  <button class="refresh-btn" onclick="loadBookings()">🔄 Refresh Bookings</button>
+  <button class="add-demo-btn" onclick="addDemoBooking()">➕ Demo Booking Add Karo (Test)</button>
+  <button class="wp-admin" onclick="wpAdmin()">💬 Customer ko WhatsApp Karo</button>
+
+  <a href="index.html" style="display:block;text-align:center;font-size:12px;color:var(--green);padding-bottom:24px;text-decoration:none;font-weight:500;">← Customer Booking Page</a>
+
+</div>
+
+
+</div>
+<button class="pg-switch-btn" id="pg-switch" onclick="pgToggle()">🔐 Admin Panel</button>
 <script>
+let pgOnAdmin=false;
+function pgToggle(){
+  pgOnAdmin=!pgOnAdmin;
+  document.getElementById('booking-page').style.display=pgOnAdmin?'none':'block';
+  document.getElementById('admin-page').style.display=pgOnAdmin?'block':'none';
+  document.getElementById('pg-switch').textContent=pgOnAdmin?'← Customer Page':'🔐 Admin Panel';
+  if(pgOnAdmin&&typeof loadBookings==='function') setTimeout(loadBookings,200);
+}
+
+
 // CONFIG — Apna UPI ID yahan dalo
 const UPI_ID = 'itzbhavesh011@oksbi'; // ← CHANGE THIS to your actual UPI ID
 const UPI_NAME = 'PestGuard India';
@@ -935,7 +1023,7 @@ function finalizePending() {
   finalizeBooking('UPI · UTR: ' + state.utr + ' · Verification Pending');
 }
 
-function finalizeBooking(payStatus) {
+async function finalizeBooking(payStatus) {
   const id = 'PG' + Date.now().toString().slice(-6);
   state.bookingId = id;
 
@@ -955,15 +1043,13 @@ function finalizeBooking(payStatus) {
     createdAt: new Date().toLocaleString('en-IN')
   };
 
-  // Save to localStorage for admin panel
-  const bookings = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
-  bookings.unshift(booking);
-  localStorage.setItem('pg_bookings', JSON.stringify(bookings));
-
-  // Show success
+  try {
+    await window.db.collection('bookings').doc(id).set(booking);
+  } catch(e) {
+    alert('Network error! Check internet. Error: ' + e.message);
+    return;
+  }
   showSuccess(booking);
-
-  // Auto WhatsApp notification
   sendWPNotification(booking);
 }
 
@@ -1023,90 +1109,9 @@ function newBooking() {
 document.getElementById('upi-modal').addEventListener('click', function(e) {
   if (e.target === this) this.classList.remove('show');
 });
-</script>
-
-</div>
-
-<!-- ========== ADMIN PAGE ========== -->
-<div id="admin-page" class="pg-admin">
 
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">🛡️ PestGuard</div>
-    <div class="login-sub">Admin / Technician Login</div>
-    <label class="login-label">Username</label>
-    <input class="login-input" type="text" id="login-user" placeholder="Bhavesh" />
-    <label class="login-label">Password</label>
-    <input class="login-input" type="password" id="login-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" onclick="doLogin()">Login →</button>
-    <div class="login-err" id="login-err">❌ Wrong username or password</div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:16px;"></div>
-  </div>
-</div>
 
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-
-  <div class="admin-header">
-    <div class="admin-logo">🛡️ PestGuard
-      <span>Admin Panel</span>
-    </div>
-    <div class="header-right">
-      <div id="notif" class="notif-badge" style="display:none">0</div>
-      <button class="logout-btn" onclick="doLogout()">Logout</button>
-    </div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-bar">
-    <div class="stat-card">
-      <div class="stat-label">📋 Total Bookings</div>
-      <div class="stat-val green" id="stat-total">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">🆕 New Today</div>
-      <div class="stat-val blue" id="stat-new">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">✅ Completed</div>
-      <div class="stat-val" id="stat-done">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">💰 Revenue</div>
-      <div class="stat-val orange" id="stat-rev">₹0</div>
-    </div>
-  </div>
-
-  <!-- FILTER TABS -->
-  <div class="filter-tabs">
-    <button class="ftab active" onclick="filterBookings('all',this)">All</button>
-    <button class="ftab" onclick="filterBookings('New',this)">🆕 New</button>
-    <button class="ftab alert-tab" id="utr-tab" onclick="filterBookings('utr_pending',this)">⏳ UTR Verify</button>
-    <button class="ftab" onclick="filterBookings('confirmed',this)">✅ Confirmed</button>
-    <button class="ftab" onclick="filterBookings('done',this)">🏁 Done</button>
-    <button class="ftab" onclick="filterBookings('cancelled',this)">❌ Cancelled</button>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="search-bar">
-    <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" id="search-input" placeholder="Name, phone, booking ID search karo..." oninput="searchBookings()"/>
-  </div>
-
-  <!-- LIST -->
-  <div class="bookings-list" id="bookings-list"></div>
-
-  <button class="refresh-btn" onclick="loadBookings()">🔄 Refresh Bookings</button>
-  <button class="add-demo-btn" onclick="addDemoBooking()">➕ Demo Booking Add Karo (Test)</button>
-  <button class="wp-admin" onclick="wpAdmin()">💬 Customer ko WhatsApp Karo</button>
-
-  <a href="index.html" style="display:block;text-align:center;font-size:12px;color:var(--green);padding-bottom:24px;text-decoration:none;font-weight:500;">← Customer Booking Page</a>
-
-</div>
-
-<script>
 const ADMIN_CREDS = { Bhavesh: 'Bhavesh@2004' };
 const WP_ADMIN = '919956130707';
 let currentFilter = 'all';
@@ -1144,10 +1149,20 @@ window.onload = () => {
 };
 
 function loadBookings() {
-  allBookings = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
-  updateStats();
-  renderBookings(allBookings);
-  updateNotifBadge();
+  if (window._pgUnsub) window._pgUnsub();
+  const showLoading = () => {
+    document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Loading bookings...</div></div>';
+  };
+  showLoading();
+  window._pgUnsub = window.db.collection('bookings')
+    .orderBy('createdAtMs','desc')
+    .onSnapshot(snap => {
+      allBookings = snap.docs.map(d => d.data());
+      updateStats(); searchBookings(); updateNotifBadge();
+    }, err => {
+      console.error('Firestore:', err);
+      document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Firebase connection error</div><div class="empty-sub">' + err.message + '</div></div>';
+    });
 }
 
 function updateStats() {
@@ -1230,21 +1245,27 @@ function getUTRBox(b, idx) {
   </div>`;
 }
 
-function verifyPayment(idx, utr) {
-  if (!confirm('Confirm karo: ₹' + (allBookings[idx].amount||'') + ' aapke account mein aa gayi?\nUTR: ' + utr)) return;
-  allBookings[idx].payVerified = true;
-  allBookings[idx].payment = 'UPI · UTR: ' + utr + ' · Paid ✓';
-  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
-  loadBookings();
-  alert('✅ Payment verified! Booking #' + allBookings[idx].id + ' ab "Paid" mark ho gayi.');
+async function verifyPayment(idx, utr) {
+  if (idx < 0 || idx >= allBookings.length) return;
+  const b = allBookings[idx];
+  if (!confirm('Payment verified? #' + b.id)) return;
+  try {
+    await window.db.collection('bookings').doc(b.id).update({
+      payVerified: true, payment: 'UPI · UTR: ' + utr + ' · Paid ✓'
+    });
+    alert('✅ Payment Verified!');
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
-function rejectPayment(idx) {
-  const reason = prompt('Reason likhein (optional):') || 'Payment nahi mili';
-  allBookings[idx].payment = 'UPI · Payment Failed · ' + reason;
-  allBookings[idx].payVerified = false;
-  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
-  loadBookings();
+async function rejectPayment(idx) {
+  if (idx < 0 || idx >= allBookings.length) return;
+  const reason = prompt('Rejection reason:') || 'Payment not received';
+  const b = allBookings[idx];
+  try {
+    await window.db.collection('bookings').doc(b.id).update({
+      payVerified: false, payment: 'UPI · Failed · ' + reason
+    });
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
 function renderBookings(list) {
@@ -1318,11 +1339,11 @@ function renderBookings(list) {
   }).join('');
 }
 
-function updateStatus(idx, newStatus) {
+async function updateStatus(idx, newStatus) {
   if (idx < 0 || idx >= allBookings.length) return;
-  allBookings[idx].status = newStatus;
-  localStorage.setItem('pg_bookings', JSON.stringify(allBookings));
-  loadBookings();
+  const b = allBookings[idx];
+  try { await window.db.collection('bookings').doc(b.id).update({ status: newStatus }); }
+  catch(e) { alert('Error: ' + e.message); }
 }
 
 function callCustomer(phone) {
@@ -1364,44 +1385,11 @@ function addDemoBooking() {
     payVerified: false,
     createdAt: new Date().toLocaleString('en-IN')
   };
-  const b = JSON.parse(localStorage.getItem('pg_bookings') || '[]');
-  b.unshift(demo);
-  localStorage.setItem('pg_bookings', JSON.stringify(b));
-  loadBookings();
-  alert(`✅ Demo booking add ho gayi: #${demo.id}\n${choice ? '⏳ UTR Verify tab mein dikhegi!' : '💵 Cash booking'}`);
-}
-</script>
-
-</div>
-
-<!-- FLOATING TOGGLE BUTTON -->
-<button class="page-toggle-btn" id="toggle-btn" onclick="togglePage()">
-  🔐 Admin Panel
-</button>
-
-<script>
-// ===== PAGE SWITCHER =====
-let onAdminPage = false;
-function togglePage() {
-  onAdminPage = !onAdminPage;
-  document.getElementById('booking-page').style.display = onAdminPage ? 'none' : 'block';
-  const adminPage = document.getElementById('admin-page');
-  adminPage.style.display = onAdminPage ? 'block' : 'none';
-  document.getElementById('toggle-btn').innerHTML = onAdminPage
-    ? '← Customer Page'
-    : '🔐 Admin Panel';
-  if (onAdminPage && typeof loadBookings === 'function') {
-    setTimeout(loadBookings, 100);
-  }
+  window.db.collection('bookings').doc(demo.id).set(demo)
+    .then(() => alert('✅ Demo booking saved to Firebase: #' + demo.id))
+    .catch(e => alert('Error: ' + e.message));
 }
 
-// Listen for storage changes (when booking is made, admin auto-refreshes)
-window.addEventListener('storage', function(e) {
-  if (e.key === 'pg_bookings' && onAdminPage && typeof loadBookings === 'function') {
-    loadBookings();
-  }
-});
 </script>
-
 </body>
 </html>
