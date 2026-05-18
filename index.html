@@ -1150,18 +1150,21 @@ window.onload = () => {
 
 function loadBookings() {
   if (window._pgUnsub) window._pgUnsub();
-  const showLoading = () => {
-    document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Loading bookings...</div></div>';
-  };
-  showLoading();
+  document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Loading bookings...</div></div>';
   window._pgUnsub = window.db.collection('bookings')
-    .orderBy('createdAtMs','desc')
     .onSnapshot(snap => {
       allBookings = snap.docs.map(d => d.data());
+      allBookings.sort((a, b) => {
+        const ta = a.createdAtMs || 0;
+        const tb = b.createdAtMs || 0;
+        if (ta && tb) return tb - ta;
+        return (b.createdAt || '').localeCompare(a.createdAt || '');
+      });
       updateStats(); searchBookings(); updateNotifBadge();
+      console.log('Bookings loaded:', allBookings.length);
     }, err => {
-      console.error('Firestore:', err);
-      document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Firebase connection error</div><div class="empty-sub">' + err.message + '</div></div>';
+      console.error('Firestore error:', err);
+      document.getElementById('bookings-list').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Firebase error: ' + err.message + '</div></div>';
     });
 }
 
